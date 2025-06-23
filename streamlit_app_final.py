@@ -100,7 +100,7 @@ if uploaded_file:
             karşılaştırma_df = pd.merge(result_df, gerçek_df, on='date', how='inner')
 
             fig2 = go.Figure()
-            fig2.add_trace(go.Scatter(x=karşılaştırma_df['date'], y=karşılaştırma_df['mean'], mode='lines+markers', name='Forecast'))
+            fig2.add_trace(go.Scatter(x=karşılaştırma_df['date'], y=karşılaştırma_df['predicted_orders'], mode='lines+markers', name='Forecast'))
             fig2.add_trace(go.Scatter(x=karşılaştırma_df['date'], y=karşılaştırma_df['actual_orders'], mode='lines+markers', name='Real Values'))
 
             fig2.update_layout(title="Actual vs Estimated Number of Orders", xaxis_title="Date", yaxis_title="Order Quantity", template="plotly_white")
@@ -110,10 +110,10 @@ if uploaded_file:
 
             from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-            mse = mean_squared_error(karşılaştırma_df["actual_orders"], karşılaştırma_df["mean"])
+            mse = mean_squared_error(karşılaştırma_df["actual_orders"], karşılaştırma_df["predicted_orders"])
             rmse = mse ** 0.5
-            mae = mean_absolute_error(karşılaştırma_df["actual_orders"], karşılaştırma_df["mean"])
-            mape = (abs((karşılaştırma_df["actual_orders"] - karşılaştırma_df["mean"]) / karşılaştırma_df["actual_orders"])).mean() * 100
+            mae = mean_absolute_error(karşılaştırma_df["actual_orders"], karşılaştırma_df["predicted_orders"])
+            mape = (abs((karşılaştırma_df["actual_orders"] - karşılaştırma_df["predicted_orders"]) / karşılaştırma_df["actual_orders"])).mean() * 100
 
             st.write(f"**RMSE** (Root Mean Square Error): {rmse:.2f}")
             st.write(f"**MAE** (Mean Absolute Error): {mae:.2f}")
