@@ -28,7 +28,7 @@ if uploaded_file:
     with st.sidebar:
         st.header("⚙️ Forecast Settings")
         sim_mode = st.checkbox("I want to forecast with confidence interval")
-        sim_count = st.slider("Number of simulations", min_value=1, max_value=300, value=50, step=10)
+        sim_count = st.slider("Number of simulations", min_value=10, max_value=300, value=50, step=10)
         confidence = st.selectbox("Confidence Interval (%)", options=[75, 80, 85, 90, 95], index=1)
 
     # === Tahmin Hesaplama ===
