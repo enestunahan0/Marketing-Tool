@@ -28,15 +28,15 @@ if uploaded_file:
     with st.sidebar:
         st.header("⚙️ Forecast Settings")
         sim_mode = st.checkbox("I want to forecast with confidence interval")
-        sim_count = st.slider("Number of simulations", min_value=10, max_value=300, value=50, step=10)
-        confidence = st.selectbox("Confidence Interval (%)", options=[80, 90, 95], index=1)
+        sim_count = st.slider("Number of simulations", min_value=1, max_value=300, value=50, step=10)
+        confidence = st.selectbox("Confidence Interval (%)", options=[75, 80, 85, 90, 95], index=1)
 
     # === Tahmin Hesaplama ===
     with st.spinner("Calculating forecasts..."):
         if sim_mode:
             result_df = simulate_predictions_with_uncertainty(future_costs, n_simulations=sim_count)
             result_df = result_df.rename(columns={
-                "mean_predicted_orders": "mean",
+                "mean_predicted_orders": "predicted_orders",
                 "std_predicted_orders": "std",
                 "lower_5th": "lower",
                 "upper_95th": "upper"
@@ -62,7 +62,7 @@ if uploaded_file:
         def show_aggregated(label, freq_code):
             df = result_df.copy()
             df['grup'] = df['date'].dt.to_period(freq_code).apply(lambda r: r.start_time)
-            agg = df.groupby('grup')[['mean', 'lower', 'upper']].agg(['sum', 'mean'])
+            agg = df.groupby('grup')[['predicted_orders', 'lower', 'upper']].agg(['sum', 'mean'])
             st.markdown(f"#### {label} Forecasts")
             st.dataframe(agg)
             st.download_button(f"📥 {label} Download", agg.to_csv(), file_name=f"{label.lower()}_forecast.csv")
@@ -75,7 +75,7 @@ if uploaded_file:
     with tab2:
         st.subheader("📈 Daily Order Forecast Graph")
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=result_df['date'], y=result_df['mean'], mode='lines+markers', name='mean'))
+        fig.add_trace(go.Scatter(x=result_df['date'], y=result_df['predicted_orders'], mode='lines+markers', name='mean'))
         if sim_mode:
             fig.add_trace(go.Scatter(
                 x=result_df['date'].tolist() + result_df['date'][::-1].tolist(),
@@ -118,6 +118,7 @@ if uploaded_file:
             st.write(f"**RMSE** (Root Mean Square Error): {rmse:.2f}")
             st.write(f"**MAE** (Mean Absolute Error): {mae:.2f}")
             st.write(f"**MAPE** (Mean Absolute Percentage Error): %{mape:.2f}")
+
             
     # === TAB 3: Veri Önizleme ===
     with tab3:
