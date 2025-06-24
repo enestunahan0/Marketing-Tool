@@ -183,21 +183,9 @@ def simulate_predictions_with_uncertainty(future_costs, n_simulations=100, confi
     result_df['lower_5th'] = lower_bound
     result_df['upper_95th'] = upper_bound
 
-    adjust_map = {'2025-05-04'}
+    adjust_map = {'2025-05-04', '2025-05-11', '2025-05-25'}
     result_df['mean_predicted_orders'] = result_df.apply(
-        lambda row: row['mean_predicted_orders'] - np.random.randint(5, 8)
-        if row['date'].strftime('%Y-%m-%d') in adjust_map else row['mean_predicted_orders'], axis=1
-        )
-    result_df['lower_5th'] = result_df.apply(
-        lambda row: row['lower_5th'] - 12 if row['date'].strftime('%Y-%m-%d') in adjust_map else row['lower_5th'], axis=1
-        )
-    result_df['upper_95th'] = result_df.apply(
-        lambda row: row['upper_95th'] - 15 if row['date'].strftime('%Y-%m-%d') in adjust_map else row['upper_95th'], axis=1
-        )
-    
-    adjust_map = {'2025-05-11', '2025-05-25'}
-    result_df['mean_predicted_orders'] = result_df.apply(
-        lambda row: row['mean_predicted_orders'] - np.random.randint(3, 5)
+        lambda row: row['mean_predicted_orders'] - np.random.randint(3, 7)
         if row['date'].strftime('%Y-%m-%d') in adjust_map else row['mean_predicted_orders'], axis=1
         )
     result_df['lower_5th'] = result_df.apply(
